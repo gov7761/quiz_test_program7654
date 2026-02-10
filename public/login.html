@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+    <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+
+</head>
+
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo"><b>Admin</b>Login</div>
+
+        <div class="card">
+            <div class="card-body login-card-body">
+                <form action="/login" method="POST">
+                    <div class="input-group mb-3">
+                        <input name="username" class="form-control" placeholder="Admin ID" required>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Password"
+                            required>
+
+                        <div class="input-group-append">
+                            <span class="input-group-text" onclick="togglePassword()" style="cursor:pointer">
+                                <i class="fas fa-eye" id="eyeIcon"></i>
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <button class="btn btn-primary btn-block">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function togglePassword() {
+            const password = document.getElementById("password");
+            const icon = document.getElementById("eyeIcon");
+
+            if (password.type === "password") {
+                password.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                password.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+    </script>
+</body>
+
+</html>
