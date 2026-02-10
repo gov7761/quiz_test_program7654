@@ -17,8 +17,11 @@ app.use(express.static("public"));
 
 const ADMIN_ID = "admin";
 const ADMIN_PASS = "admin123";
+// app.get("/", (req, res) => {
+//   res.sendFile(path.join(__dirname, "public", "login.html"));
+// });
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "login.html"));
+  res.status(200).send("Vercel function working");
 });
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -69,22 +72,27 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
+
 const upload = multer({
-  dest: "uploads/",
+  storage: multer.memoryStorage(),
   limits: {
-    fileSize: MAX_FILE_SIZE
-  },
-  fileFilter: (req, file, cb) => {
-    const allowedExts = [".xls", ".xlsx"];
-    const ext = path.extname(file.originalname).toLowerCase();
-
-    if (!allowedExts.includes(ext)) {
-      return cb(new Error("Only Excel files (.xls, .xlsx) allowed"));
-    }
-
-    cb(null, true);
+    fileSize: 5 * 1024 * 1024 // 5MB
   }
 });
+app.post("/upload", upload.single("file"), async (req, res) => {
+  try {
+    const fileBuffer = req.file.buffer; // <-- IN MEMORY
+    const fileName = req.file.originalname;
+
+    // send to S3 / email / cloud
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Upload failed");
+  }
+});
+
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -534,8 +542,12 @@ app.post("/save-test", (req, res) => {
     }
   );
 });
-
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+process.on("unhandledRejection", err => {
+  console.error("UNHANDLED REJECTION:", err);
 });
+process.on("uncaughtException", err => {
+  console.error("UNCAUGHT EXCEPTION:", err);
+});
+
+module.exports = app;
+
